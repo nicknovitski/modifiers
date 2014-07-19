@@ -8,8 +8,8 @@ module Modifiers
 
     attr_reader :arguments
 
-    def invoke
-      bound_method.call(*arguments)
+    def invoke(context = receiver)
+      method.bind(context).call(*arguments)
     end
 
     def name
