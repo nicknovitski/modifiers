@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_examples_for_modifiers'
 require 'modifiers/deprecated'
 
 RSpec.describe Modifiers do

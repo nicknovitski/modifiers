@@ -1,4 +1,4 @@
-RSpec.shared_examples 'a modifier' do |modifier|
+RSpec.shared_examples 'a modifier' do |modifier, changes_return_value: false|
   let(:test_class) do
     Class.new do
       extend Modifiers
@@ -22,10 +22,12 @@ RSpec.shared_examples 'a modifier' do |modifier|
   end
   subject(:instance) { test_class.new }
 
-  it 'does not change the return value of the method' do
-    test_class.send(modifier, :public_method)
-    expect(instance.public_method).to be :foo
-    expect(instance.public_method(:bar)).to be :bar
+  unless changes_return_value
+    it 'does not change the return value of the method' do
+      test_class.send(modifier, :public_method)
+      expect(instance.public_method).to be :foo
+      expect(instance.public_method(:bar)).to be :bar
+    end
   end
 
   it 'does not change the visibility of a private method' do
