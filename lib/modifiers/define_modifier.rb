@@ -1,13 +1,13 @@
-require 'modifiers/modifier'
+require 'modifiers/modification'
 
 module Modifiers
   def self.define_modifier(name, &block)
     define_method(name) do |sym|
-      modifier = Modifier.new(self, sym)
+      mod = Modification.new(klass: self, method: sym)
       define_method(sym) do |*args|
-        modifier.call(self, *args, &block)
+        mod.call(self, *args, &block)
       end
-      send(modifier.original_visibility, sym)
+      send(mod.original_visibility, sym)
     end
   end
 end
