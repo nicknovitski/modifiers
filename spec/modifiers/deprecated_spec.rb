@@ -5,7 +5,7 @@ RSpec.describe Modifiers do
   describe '#deprecated' do
     it_behaves_like 'a modifier', :deprecated
 
-    let(:test_class) do 
+    let(:test_class) do
       class Test
         extend Modifiers
 

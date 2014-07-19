@@ -3,7 +3,7 @@ require 'modifiers/define_modifier'
 module Modifiers
   class Deprecation < Modification
     def warning(invocation)
-      "deprecated method #{method_identifier} called from #{invocation.location.join(":")}"
+      "deprecated method #{method_identifier} called from #{invocation.location.join(':')}"
     end
   end
 
