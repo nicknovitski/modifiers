@@ -2,9 +2,10 @@ require 'modifiers/define_modifier'
 module Modifiers
   define_modifier(:deprecated) do |method, *args|
     caller[2] =~ /(.*?):(\d+).*?$/i
-    method_id = self.class.to_s + '#' + method.name.to_s
+    klass = self.kind_of? Module
+    target = klass ? "#{self}." : "#{self.class}#"
     location = [$1, $2].join(":")
-    warning = "deprecated method #{method_id} called from #{location}"
+    warning = "deprecated method #{target}#{method.name} called from #{location}"
     warn warning
     method.call(*args)
   end

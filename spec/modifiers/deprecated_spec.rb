@@ -31,7 +31,7 @@ RSpec.describe Modifiers do
     end
 
     it 'includes the name of the method in the warning' do
-      expect(subject).to receive(:warn).with(/\#method/)
+      expect(subject).to receive(:warn).with(/Test\#method/)
 
       subject.method
     end
@@ -40,6 +40,25 @@ RSpec.describe Modifiers do
       expect(subject).to receive(:warn).with(/deprecated_spec.rb/)
 
       subject.method
+    end
+
+    context 'class methods' do
+      before do
+        class Test
+          class << self
+            extend Modifiers
+            def class_method
+              #
+            end
+            deprecated :class_method
+          end
+        end
+      end
+      it 'names the method correctly in the warning' do
+        expect(test_class).to receive(:warn).with(/Test\.class_method/)
+
+        test_class.class_method
+      end
     end
   end
 end
