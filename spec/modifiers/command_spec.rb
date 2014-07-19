@@ -4,11 +4,10 @@ require 'modifiers/command'
 RSpec.describe Modifiers do
   class Doer
     extend Modifiers
-    def take_action
+    command def take_action
       # lots of side-effectful-operations
       2 + 2
     end
-    command :take_action
   end
 
   subject(:doer) { Doer.new }

@@ -10,10 +10,9 @@ RSpec.describe Modifiers do
 
   class Client
     extend Modifiers
-    def call_service
+    memoized def call_service
       Service.expensive_operation
     end
-    memoized :call_service
   end
 
   subject(:client) { Client.new }

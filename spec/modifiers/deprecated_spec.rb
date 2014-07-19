@@ -9,10 +9,9 @@ RSpec.describe Modifiers do
       class Test
         extend Modifiers
 
-        def method
-          #
+        deprecated def method
+          # something you shouldn't be using
         end
-        deprecated :method
       end
     end
     subject(:test_instance) { test_class.new }
@@ -46,10 +45,9 @@ RSpec.describe Modifiers do
         class Test
           class << self
             extend Modifiers
-            def class_method
+            deprecated def class_method
               #
             end
-            deprecated :class_method
           end
         end
       end
