@@ -10,6 +10,7 @@ RSpec.describe Modifiers do
 
   class Client
     extend Modifiers
+
     memoized def call_service
       Service.expensive_operation
     end
