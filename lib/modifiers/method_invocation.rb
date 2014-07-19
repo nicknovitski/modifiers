@@ -6,6 +6,8 @@ module Modifiers
       @arguments = arguments
     end
 
+    attr_reader :arguments
+
     def invoke
       bound_method.call(*arguments)
     end
@@ -14,12 +16,17 @@ module Modifiers
       method.name
     end
 
+    def location
+      caller[5] =~ /(.*?):(\d+).*?$/i
+      [$1, $2]
+    end
+
     private
 
     def bound_method
       method.bind(receiver)
     end
 
-    attr_reader :method, :receiver, :arguments
+    attr_reader :method, :receiver
   end
 end

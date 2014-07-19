@@ -1,13 +1,14 @@
 require 'modifiers/define_modifier'
 
 module Modifiers
-  define_modifier(:deprecated) do |method|
-    caller[3] =~ /(.*?):(\d+).*?$/i
-    klass = self.kind_of? Module
-    target = klass ? "#{self}." : "#{self.class}#"
-    location = [$1, $2].join(":")
-    warning = "deprecated method #{target}#{method.name} called from #{location}"
-    warn warning
-    method.invoke
+  class Deprecation < Modification
+    def warning(invocation)
+      "deprecated method #{method_identifier} called from #{invocation.location.join(":")}"
+    end
+  end
+
+  define_modifier(:deprecated, Deprecation) do |invocation, modification|
+    warn modification.warning(invocation)
+    invocation.invoke
   end
 end
