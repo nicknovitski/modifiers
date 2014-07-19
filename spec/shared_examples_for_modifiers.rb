@@ -37,4 +37,8 @@ RSpec.shared_examples 'a modifier' do |modifier|
     test_class.send(modifier, :protected_method)
     expect(instance.protected_methods).to include(:protected_method)
   end
+
+  it 'does not increase the number of methods on the target' do
+    expect { test_class.send(modifier, :public_method) }.not_to change { test_class.methods }
+  end
 end
