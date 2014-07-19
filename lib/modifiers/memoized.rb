@@ -2,7 +2,7 @@ require 'modifiers/define_modifier'
 
 module Modifiers
   define_modifier(:memoized) do |invocation|
-    ivar = "@#{invocation.name}".to_sym
+    ivar = "@#{invocation.method_name}".to_sym
 
     instance_variable_set(ivar, {}) unless instance_variable_defined?(ivar)
 

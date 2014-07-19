@@ -13,14 +13,10 @@ module Modifiers
     def call(instance, *args, &block)
       invocation = MethodInvocation.new(method: original_method, receiver: instance, arguments: args)
       if block
-        instance.instance_exec(invocation, self, &block)
+        instance.instance_exec(invocation, &block)
       else
         invocation.invoke
       end
-    end
-
-    def method_identifier
-      "#{receiver}#{original_method.name}"
     end
 
     private
@@ -35,10 +31,6 @@ module Modifiers
       else
         :public
       end
-    end
-
-    def receiver
-      instance.is_a?(Module) ? "#{instance}." : "#{instance.class}#"
     end
 
     def instance

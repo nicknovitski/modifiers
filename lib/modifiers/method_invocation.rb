@@ -12,15 +12,23 @@ module Modifiers
       method.bind(context).call(*arguments)
     end
 
-    def name
-      method.name
-    end
-
     def location
       [file, line_no]
     end
 
+    def method_name
+      method.name
+    end
+
+    def method_identifier
+      target + method_name.to_s
+    end
+
     private
+
+    def target
+      receiver.is_a?(Module) ? "#{receiver}." : "#{receiver.class}#"
+    end
 
     def file
       match_caller(/(.*?):/i)
@@ -35,7 +43,7 @@ module Modifiers
     end
 
     def method_caller
-      caller[8]
+      caller[7]
     end
 
     attr_reader :method, :receiver
