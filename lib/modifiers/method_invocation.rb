@@ -17,14 +17,25 @@ module Modifiers
     end
 
     def location
-      caller[5] =~ /(.*?):(\d+).*?$/i
-      [$1, $2]
+      [file, line_no]
     end
 
     private
 
-    def bound_method
-      method.bind(receiver)
+    def file
+      match_caller(/(.*?):/i)
+    end
+
+    def line_no
+      match_caller(/:(\d+).*?$/i)
+    end
+
+    def match_caller(regex)
+      method_caller.match(regex).to_s
+    end
+
+    def method_caller
+      caller[8]
     end
 
     attr_reader :method, :receiver
