@@ -4,7 +4,13 @@ module Modifiers
       original_method = instance_method(sym)
       original_visibility = visibility_of(sym)
       define_method(sym) do |*args|
-        instance_exec(original_method.bind(self), *args, &block)
+        bound_method = original_method.bind(self)
+        bound_method.define_singleton_method(:invoke) { bound_method.call(*args) }
+        if block
+          instance_exec(bound_method, *args, &block)
+        else
+          bound_method.invoke
+        end
       end
       send original_visibility, sym
     end

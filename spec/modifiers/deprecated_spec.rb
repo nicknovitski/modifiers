@@ -54,6 +54,7 @@ RSpec.describe Modifiers do
           end
         end
       end
+
       it 'names the method correctly in the warning' do
         expect(test_class).to receive(:warn).with(/Test\.class_method/)
 
