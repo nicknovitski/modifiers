@@ -122,7 +122,7 @@ class DuckFarmer < Struct.new(:hutches)
   extend Modifiers
 
   query def fullest_hutch
-    hutches.max { |h1,h2| h1.count_eggs - h2.count_eggs
+    hutches.max { |h1,h2| h1.count_eggs - h2.count_eggs }
   end
 end
 
