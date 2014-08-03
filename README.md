@@ -1,3 +1,6 @@
+# Modifiers
+[![Build Status](https://travis-ci.org/nicknovitski/modifiers.svg?branch=master)](https://travis-ci.org/nicknovitski/modifiers)
+
 ## What is/are Modifiers?
 
 `Modifiers` is a collection of method modifiers, and a way to make more.
