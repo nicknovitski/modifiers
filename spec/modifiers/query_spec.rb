@@ -26,8 +26,11 @@ RSpec.describe Modifiers do
   end
 
   class SubTest
+    def initialize
+      @state_changes = []
+    end
     def status
-      @status ||= :awake
+      @state_changes << :awake
     end
   end
 
@@ -46,7 +49,7 @@ RSpec.describe Modifiers do
     end
 
     it 'prevents the method from altering linked objects' do
-      expect { instance.child_status }.not_to change { child.instance_variables }
+      expect { instance.child_status }.not_to change { child.instance_variable_get(:@state_changes) }
     end
   end
 end
