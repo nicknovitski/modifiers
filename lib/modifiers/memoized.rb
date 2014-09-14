@@ -1,12 +1,28 @@
 require 'modifiers/define_modifier'
 
 module Modifiers
-  define_modifier(:memoized) do |invocation|
-    ivar = "@#{invocation.method_name}".to_sym
+  module Memoized
+    private
 
-    instance_variable_set(ivar, {}) unless instance_variable_defined?(ivar)
+    def ivar(method_name)
+      "@#{method_name}".to_sym
+    end
 
-    memoizer = instance_variable_get(ivar)
-    memoizer.fetch(invocation.arguments) { memoizer[invocation.arguments] = invocation.invoke }
+    def init_memo(method_name)
+      instance_variable_set(ivar(method_name), {}) unless instance_variable_defined?(ivar(method_name))
+    end
+
+    def memoizer_for(method_name)
+      instance_variable_get(ivar(method_name))
+    end
+
+    def memoizer_fetch(method_name, key, &block)
+      memoizer_for(method_name).fetch(key, &block)
+    end
+  end
+
+  define_modifier(:memoized, Memoized) do |*args, &block|
+    init_memo(__method__)
+    memoizer_fetch(__method__, args) { memoizer_for(__method__)[args] = super(*args, &block) }
   end
 end

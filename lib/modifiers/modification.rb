@@ -1,42 +1,28 @@
-require 'modifiers/method_invocation'
-
-module Modifiers
-  class Modification
-    def initialize(klass:, method:)
-      @klass = klass
-      @original_method = klass.send(:instance_method, method)
-      @original_visibility = visibility_on(klass)
+class Modification < Module
+  def initialize(name, receiver, method_name, method_body)
+    @name, @receiver, @method_name = name, receiver, method_name
+    super() do
+      define_method(method_name, &method_body)
+      set_visibility
     end
+  end
 
-    attr_reader :original_visibility
+  private
 
-    def call(instance, *args, &block)
-      invocation = MethodInvocation.new(method: original_method, receiver: instance, arguments: args)
-      if block
-        instance.instance_exec(invocation, &block)
-      else
-        invocation.invoke
-      end
+  attr_reader :receiver, :method_name
+
+  def set_visibility
+    case
+    when private? then private(method_name)
+    when protected? then protected(method_name)
     end
+  end
 
-    private
+  def protected?
+    receiver.protected_method_defined?(method_name)
+  end
 
-    attr_reader :original_method, :klass
-
-    def visibility_on(klass)
-      if klass.private_method_defined?(original_method.name)
-        :private
-      elsif klass.protected_method_defined?(original_method.name)
-        :protected
-      else
-        :public
-      end
-    end
-
-    def instance
-      klass.new
-    rescue TypeError # klass is a singleton metaclass
-      ObjectSpace.each_object(klass).first
-    end
+  def private?
+    receiver.private_method_defined?(method_name)
   end
 end
