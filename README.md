@@ -5,16 +5,14 @@
 
 `Modifiers` is a collection of method modifiers, and a way to make more.
 
-_Method Modifiers_, obviously, are modifiers to methods.  Specifically, in Ruby
+_Method Modifiers_, obviously, modify methods.  Specifically, in Ruby
 terms, they are class methods which:
 
-1. Take a symbol argument which names an instance method of the same class, and
-2. Return the same symbol, but
-3. Alter the named method in some way.
+1. Take a symbol argument which names an instance method of the same class, _and_
+2. Return the same symbol, _but_
+3. Cause subsequent calls to the named method to change in some way.
 
-Ruby has shipped with four (4) modifiers since forever: the three access
-modifiers (`public`, `private`, and `protected`), and `module_function`.  This
-library [adds a few others, and a facility for creating even more](#usage).
+This library [includes a few, as well as ways to make more](#usage).
 
 ## Why is/are Modifiers?
 

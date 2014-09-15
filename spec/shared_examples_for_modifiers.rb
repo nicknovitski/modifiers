@@ -24,6 +24,10 @@ RSpec.shared_examples 'a modifier' do |modifier, changes_return_value: false|
   let(:random_class_name) { (0...10).map { ('A'..'Z').to_a[rand(26)] }.join }
   subject(:instance) { test_class.new }
 
+  it 'returns the symbol it is passed' do
+    expect(test_class.send(modifier, :public_method)).to be :public_method
+  end
+
   unless changes_return_value
     it 'does not change the return value of the method' do
       test_class.send(modifier, :public_method)
