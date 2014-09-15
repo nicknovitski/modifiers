@@ -31,7 +31,6 @@ class Foo
   def poot
    "I accidentally typed the name of this method but I think it's great"
   end
-
   timed :poot
 end
 

@@ -12,17 +12,20 @@ RSpec.describe Modifiers do
 
     attr_reader :memo, :enum
 
-    query def fooer?
+    def fooer?
       @memo ||= true
     end
+    query :fooer?
 
-    query def insertable?(val)
+    def insertable?(val)
       @enum << val
     end
+    query :insertable?
 
-    query def child_status
+    def child_status
       @sub_test.status
     end
+    query :child_status
   end
 
   class SubTest
