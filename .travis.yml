@@ -8,7 +8,6 @@ deploy:
   provider: rubygems
   api_key:
     secure: fewAgjCXLYSkbRq57EQYRTjwPn/LfQgpvSh1HBdVG1Vjds2OCL+yl3d6x30o4q28GU7dMLKjEl2BZrrQ9TwPgit3LRPUwlsoZRvGQj+oztdNfshpWansne6coBYa5vx/tQFBSDWkTMdE2RMH1w7qP20Iqn44c4yQU1tQiqWoZMQ=
-  gem: modifiers
   on:
     tags: true
     repo: nicknovitski/modifiers
