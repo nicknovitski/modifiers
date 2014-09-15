@@ -18,20 +18,44 @@ library [adds a few others, and a facility for creating even more](#usage).
 
 ## Why is/are Modifiers?
 
-DRYing up code sometimes involves smaller fragments of shared behavior than a
-method.  Here's an example you've probably read and written before:
+The pursuit of DRY code can involve fragments of shared behavior smaller than a
+method.
+
+Here's an example that might feel familiar:
 ```ruby
-# old and busted
 def count_ducks
   @count_ducks ||= DuckFlock.all.map(&size).inject(0, &:+)
 end
 ```
 
-Why are you writing the characters 'count_ducks', in the _exact same order_
-__two whole times__?  If you already know how to implement memoization, why let
-your code challenge you to prove it every time you want it done?! Instead,
-implement it one final, flawless time, and tell the interpreter firmly, "No,
-_you_ type the name twice, my time is far too valuable."
+This method is quite small, but it still complects the concerns of counting
+ducks and of saving and reusing the result of a calculation, and that latter
+concern might be repeated any number of times in your codebase.
+
+With modifiers, we can encapsulate the implementation of the memoization, and
+keep the intent:
+```ruby
+def count_ducks
+  DuckFlock.all.map(&size).inject(0, &:+)
+end
+memoized :count_ducks
+```
+
+## Requirements
+
+Behind the scenes, `modifiers` uses `Module#prepend`, so it requires Ruby
+version 2.0.0 or higher.
+
+If you have at least version 2.1.0, you can call them in-line with your method
+definitions, which looks completely baller imo:
+```ruby
+# requires Ruby 2.1.0 or higher, cool kids only
+memoized query def fetch_from_api(params)
+  ApiFetcher.new(params).call
+end
+```
+
+(All other code examples in this document work on 2.0.)
 
 ## Installation
 
@@ -47,6 +71,36 @@ And then execute:
 
 ### built-in modifiers
 
+#### memoized
+
+Every now and then, you start to care how long it takes for a method to run.
+You may find yourself wishing it just re-used some hard-won values, rather than
+throwing them away and rebuilding them anew every time you call it.
+
+(You may recognize the example from earlier, but this one is more complete.)
+
+```ruby
+require 'modifiers/memoized'
+
+class DuckService
+  extend Modifiers
+
+  def count_ducks
+    DuckFlock.all.map(&size).inject(0, &:+)
+  end
+  memoized :count_ducks
+end
+```
+
+A method modified by `memoized` will run once normally, per unique combination
+of arguments, after which it will simply return the same result for the
+lifetime of the receiving object. Dazzle your friends with your terse, yet
+performant, fibonnaci implementations!
+
+(If you want all this and more, you can use
+[memoist](https://github.com/matthewrudy/memoist) (formerly
+`ActiveSupport::Memoizable`) instead, but I warn you: it involves `eval`.)
+
 #### deprecated
 
 Sometimes there's a method, and you want it to die, but not a clean, swift
@@ -60,9 +114,10 @@ require 'modifiers/deprecated'
 class BadHacks
   extend Modifiers
 
-  deprecated def awful_method
+  def awful_method
     # some ugly hack, probably involving define_method and ObjectSpace
   end
+  deprecated :awful_method
 end
 ```
 
@@ -72,36 +127,6 @@ BadHacks#awful_method called from app/controllers/ducks_controller.rb:782`
 
 (Please note that the `deprecated` method is deprecated, and you should
 definitely use `Gem.deprecate` instead.)
-
-#### memoized
-
-Every now and then, you will come to care how long it takes for a method to
-run.  You may find yourself wishing it just re-used some hard-won values,
-rather than throwing them away and rebuilding them anew every time you call it.
-
-To demonstrate this, on multiple levels, I will re-use the case from a previous
-section.
-
-```ruby
-require 'modifiers/memoized'
-
-class DuckService
-  extend Modifiers
-
-  memoized def count_ducks
-    DuckFlock.all.map(&size).inject(0, &:+)
-  end
-end
-```
-
-A method modified by `memoized` will run once normally, per unique combination
-of arguments, after which it will simply return the same result for the
-lifetime of the receiving object. Dazzle your friends with your terse, yet
-performant, fibonnaci implementations!
-
-(If you want all this and more, you can use
-[memoist](https://github.com/matthewrudy/memoist) (formerly
-`ActiveSupport::Memoizable`) instead, but I warn you: it involves `eval`.)
 
 #### commands and queries
 
@@ -118,15 +143,17 @@ sounds.
 Conversely (?), a method modified by `query` will never change the state of
 anything non-global and in-process.  This is also trivial, but it might seem
 more impressive.
+
 ```ruby
 require 'modifiers/command_query'
 
 class DuckFarmer < Struct.new(:hutches)
   extend Modifiers
 
-  query def fullest_hutch
+  def fullest_hutch
     hutches.max { |h1,h2| h1.count_eggs - h2.count_eggs }
   end
+  query :fullest_hutch
 end
 
 class DuckHutch < Struct.new(:num_eggs)
@@ -151,8 +178,6 @@ If this was an infomercial, now is when I would say something like "It's just
 that easy, Michael!", and you (your name is Michael in this scenario) would say
 "Now _that's_ incredible!" and the audience would applaud.
 
-I'm mildly proud of this library.
-
 ### defining new modifiers
 
 New modifiers can be defined in your own modules using the `define_modifier` method.
@@ -164,59 +189,90 @@ require 'modifiers/define_modifier'
 
 module DuckFarmModifiers
   extend Modifiers
-  define_modifier(:duck)
+  define_modifier(:duck) do |*args, &block|
+    super(*args, &block)
+  end
 end
 
 class DuckFarm
   extend DuckFarmModifiers
+  def farm
+    # raise, tend, cultivate
+  end
 
-  duck :some_method # => unchanged
+  duck :farm # => unchanged
 end
 ```
 
-Here's an identical implementation:
+Much as with `define_method`, the first argument to `define_modifier` gives us
+the name of the new modifier, and the block gives us the implementation of a
+given *modification*: a method which intercepts calls to the original method
+(in this case, `DuckFarm#farm`), does whatever it likes, then invokes the
+original method using `super`.
+
+(Sadly, just as with `define_method`, you have to use explicit arguments when
+calling `super`.  Sorry, doing otherwise involved too much oddity.)
+
+But maybe you don't want to call the original method at all!
 ```ruby
 module DuckFarmModifiers
-  define_modifier(:duck) do |method_invocation|
-    method_invocation.invoke
-  end
+  define_modifier(:x) { }
 end
 ```
 
-A block passed to `define_modifier` will become the new body of the methods
-modified by the modifier, kinda like with `define_method`.
-
-The argument passed to that block will be an object representing a particular
-call to the modified method.  As I showed you above, all you have to do
-continue that call as normal is `#invoke` it.
-
-Or not!
+Or maybe you don't want to call it with the same arguments!
 ```ruby
 module DuckFarmModifiers
-  define_modifier(:x) do
-    # temporarily disable a method and see if anyone notices
+  define_modifier(:int) do |*args, &block|
+    super(*args.map(&:to_i), &block)
   end
 end
-```
 
 You can do things before, after, or even "around" the invocation.
 ```ruby
 module DuckFarmModifiers
-  define_modifier(:perf_logged) do |invocation|
+  define_modifier(:perf_logged) do |*args, &block|
     start = Time.now
-    invocation.invoke
-    Rails.logger "#{invocation.method_identifier} finished in #{Time.now - start}s"
+    super(*args, &block)
+    Rails.logger "#{self.class.name}##{__method__} finished in #{Time.now - start}s"
   end
 end
 ```
 
-The method invocation object can also tell you the `#arguments` in the call,
-and its `#location` in the source, the `#method_name` of the method which was
-modified, or even the full `#method_identifier` in
-`Class.class_method`/`Class#instance_method` style.  All of the modifiers
-included in the library were made using it.
+### Extending modifiers
 
-What awesome ones will _you_ write?
+The body of a modifier will be evaluated in the context of the receiver
+instance of the modified method, so you can refer to any other instance
+methods.  However, given that you probably wrote your modifier to be used from
+_any_ object, there isn't much you can rely on, so you may find yourself
+writing everything you need right there in the method, resulting in a long and
+ugly method body.
+
+Luckily, there's a way out: if a given modification requires additional
+behavior, simply pass a module with all the other methods you need as the
+second argument to `define_modifier`.
+
+```ruby
+module DuckFarmModifiers
+  module Gracefully
+    private
+
+    def logger
+      Rails.logger
+    end
+
+    def log_exception(method_name, exception)
+      logger.warn("#{method_name} raised #{exception}")
+    end
+  end
+
+  define_modifier(:gracefully, Gracefully) do |*args, &block|
+    super(*args, &block)
+  rescue => e
+    log_exception(__method__, e)
+  end
+end
+```
 
 ## Contributing
 
