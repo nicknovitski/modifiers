@@ -3,9 +3,9 @@
 
 ## What is/are Modifiers?
 
-`Modifiers` is a collection of method modifiers, and a way to make more.
+`modifiers` is a collection of **method modifiers**, and a way to make more.
 
-_Method Modifiers_, obviously, modify methods.  Specifically, in Ruby
+Method modifiers, obviously, modify methods.  Specifically, in Ruby
 terms, they are class methods which:
 
 1. Take a symbol argument which names an instance method of the same class, _and_
@@ -27,10 +27,10 @@ end
 ```
 
 This method is quite small, but it still complects the concerns of counting
-ducks and of saving and reusing the result of a calculation, and that latter
-concern might be repeated any number of times in your codebase.
+ducks with that of saving and reusing the result of a calculation, and that latter
+concern might be duplicated any number of times across your codebase.
 
-With modifiers, we can encapsulate the implementation of the memoization, and
+With `modifiers`, you can encapsulate the implementation of the memoization, and
 keep the intent:
 ```ruby
 def count_ducks
@@ -67,7 +67,7 @@ And then execute:
 
 ## Usage
 
-### built-in modifiers
+### built-in method modifiers
 
 #### memoized
 
@@ -176,7 +176,7 @@ If this was an infomercial, now is when I would say something like "It's just
 that easy, Michael!", and you (your name is Michael in this scenario) would say
 "Now _that's_ incredible!" and the audience would applaud.
 
-### defining new modifiers
+### defining new method modifiers
 
 New modifiers can be defined in your own modules using the `define_modifier` method.
 
@@ -203,18 +203,20 @@ end
 ```
 
 Much as with `define_method`, the first argument to `define_modifier` gives us
-the name of the new modifier, and the block gives us the implementation of a
-given *modification*: a method which intercepts calls to the original method
-(in this case, `DuckFarm#farm`), does whatever it likes, then invokes the
-original method using `super`.
+the name of the new method modifier, and the block gives us the implementation
+of a given **modification**: a method which intercepts calls to the original
+method (in this case, `DuckFarm#farm`), does whatever it likes, then invokes
+that original method using `super`.
 
-(Sadly, just as with `define_method`, you have to use explicit arguments when
-calling `super`.  Sorry, doing otherwise involved too much oddity.)
+Sadly, just as with `define_method`, you have to use explicit arguments when
+calling `super`.  I genuinely and sincerely apologize for this leaky abstraction,
+and wish I knew a way to optimize for the common case of just calling through with
+unchanged arguments without adding significant implementation complexity.
 
-But maybe you don't want to call the original method at all!
+But hey, maybe I'm lucky and you don't want to call the original method at all!
 ```ruby
 module DuckFarmModifiers
-  define_modifier(:x) { }
+  define_modifier(:disabled) { }
 end
 ```
 
@@ -225,8 +227,10 @@ module DuckFarmModifiers
     super(*args.map(&:to_i), &block)
   end
 end
+```
 
-You can do things before, after, or even "around" the invocation.
+You can do things before, after, or even "around" the invocation; It's
+Just Ruby®!
 ```ruby
 module DuckFarmModifiers
   define_modifier(:perf_logged) do |*args, &block|
@@ -237,7 +241,7 @@ module DuckFarmModifiers
 end
 ```
 
-### Extending modifiers
+### Extending method modifiers
 
 The body of a modifier will be evaluated in the context of the receiver
 instance of the modified method, so you can refer to any other instance
