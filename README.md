@@ -1,5 +1,5 @@
 # Modifiers
-[![Build Status](https://travis-ci.org/nicknovitski/modifiers.svg?branch=master)](https://travis-ci.org/nicknovitski/modifiers)
+[![Build Status](https://travis-ci.org/nicknovitski/modifiers.svg?branch=master)](https://travis-ci.org/nicknovitski/modifiers) [![Code Climate](https://codeclimate.com/github/nicknovitski/modifiers/badges/gpa.svg)](https://codeclimate.com/github/nicknovitski/modifiers)
 
 ## What is/are Modifiers?
 
