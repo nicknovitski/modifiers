@@ -1,4 +1,6 @@
 inherit_from: .rubocop_todo.yml
+Metrics/LineLength:
+  Max: 120
 Style/Documentation:
   Exclude:
     - spec/**/*.rb
