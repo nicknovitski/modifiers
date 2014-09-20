@@ -9,7 +9,7 @@ module Modifiers
     end
 
     def duplicate_ivars!
-      ivars_hash.each { |k,v| instance_variable_set(k, Marshal.load(Marshal.dump(v))) }
+      ivars_hash.each { |k, v| instance_variable_set(k, Marshal.load(Marshal.dump(v))) }
     end
 
     def set_ivars(hash)

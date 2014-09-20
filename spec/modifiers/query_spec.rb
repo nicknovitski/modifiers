@@ -32,6 +32,7 @@ RSpec.describe Modifiers do
     def initialize
       @state_changes = []
     end
+
     def status
       @state_changes << :awake
     end

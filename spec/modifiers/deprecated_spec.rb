@@ -3,7 +3,7 @@ require 'modifiers/deprecated'
 
 RSpec.describe Modifiers do
   describe '#deprecated' do
-    context "with silenced warnings" do
+    context 'with silenced warnings' do
       around(:example) do |example|
         old_verbose, $VERBOSE = $VERBOSE, nil
         example.call

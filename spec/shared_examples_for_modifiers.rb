@@ -1,6 +1,6 @@
 RSpec.shared_examples 'a modifier' do |modifier, changes_return_value: false|
   let(:test_class) do
-    klass = Class.new do
+    Class.new do
       extend Modifiers
 
       def public_method(arg = :foo)
@@ -19,9 +19,7 @@ RSpec.shared_examples 'a modifier' do |modifier, changes_return_value: false|
         #
       end
     end
-    Object.const_set(random_class_name, klass)
   end
-  let(:random_class_name) { (0...10).map { ('A'..'Z').to_a[rand(26)] }.join }
   subject(:instance) { test_class.new }
 
   it 'returns the symbol it is passed' do
