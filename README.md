@@ -138,9 +138,9 @@ indicate and enforce!
 First, a method modified by `command` will always return `self`.  It's as
 trivial as it sounds.
 
-Conversely (?), a method modified by `query` will never change the state of
-anything non-global and in-process.  This is also trivial, but it might seem
-more impressive.
+Conversely (TODO: find out if this is actually what converse means), a method
+modified by `query` will never change the state of anything non-global and
+in-process.  This is also trivial, but it might seem more impressive.
 
 ```ruby
 require 'modifiers/command_query'
