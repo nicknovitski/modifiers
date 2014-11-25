@@ -10,3 +10,4 @@ deploy:
   on:
     tags: true
     repo: nicknovitski/modifiers
+    all_branches: true
