@@ -169,7 +169,7 @@ john = DuckFarmer.new(Array.new(3) { DuckHutch.new(rand(20)) })
 
 john.fullest_hutch # => #<struct DuckHutch num_eggs=11>
 
-john.hutches.any? { |h| h.ducks_disturbed? } # => false
+john.hutches.any?(&:ducks_disturbed?) # => false
 ```
 
 If this was an infomercial, now is when I would say something like "It's just
