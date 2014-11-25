@@ -12,7 +12,7 @@ module Modifiers
       ivars_hash.each { |k, v| instance_variable_set(k, Marshal.load(Marshal.dump(v))) }
     end
 
-    def set_ivars(hash)
+    def reset_ivars(hash)
       hash.each { |k, v| instance_variable_set(k, v) }
 
       in_state_but_not_hash = instance_variables.select { |i| hash[i].nil? }
@@ -24,7 +24,7 @@ module Modifiers
     orig_ivars = ivars_hash
     duplicate_ivars!
     return_value = super(*args, &block)
-    set_ivars(orig_ivars)
+    reset_ivars(orig_ivars)
     return_value
   end
 end
