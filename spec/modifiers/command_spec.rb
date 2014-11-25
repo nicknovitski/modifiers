@@ -16,8 +16,8 @@ RSpec.describe Modifiers do
   describe '#command' do
     it_behaves_like 'a modifier', :command, changes_return_value: true
 
-    it 'causes the method to always return nil' do
-      expect(doer.take_action).to be_nil
+    it 'causes the method to always return the receiver' do
+      expect(doer.take_action).to be doer
     end
   end
 end

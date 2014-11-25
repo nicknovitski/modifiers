@@ -135,8 +135,8 @@ no side-effects.
 It may or may not be a good idea, but at least now it's easy to unambiguously
 indicate and enforce!
 
-First, a method modified by `command` will always return nil.  It's as trivial as it
-sounds.
+First, a method modified by `command` will always return `self`.  It's as
+trivial as it sounds.
 
 Conversely (?), a method modified by `query` will never change the state of
 anything non-global and in-process.  This is also trivial, but it might seem
