@@ -1,11 +1,12 @@
 language: ruby
 rvm:
-  - 2.0.0
-  - 2.1.5
+- 2.0.0
+- 2.1.5
 deploy:
   provider: rubygems
   api_key:
-    secure: fewAgjCXLYSkbRq57EQYRTjwPn/LfQgpvSh1HBdVG1Vjds2OCL+yl3d6x30o4q28GU7dMLKjEl2BZrrQ9TwPgit3LRPUwlsoZRvGQj+oztdNfshpWansne6coBYa5vx/tQFBSDWkTMdE2RMH1w7qP20Iqn44c4yQU1tQiqWoZMQ=
+    secure: ZPeXm1QrIHsDx+ltW0aQ5mKK2vdeRHiHltBHO+KnnWMygHmeoe4ophwQetUhee/oH1LL9W1KdpLc+tSvt64PN0WooMdJtsbOA7M3DLOZGSrqNtTHM3b0xcLrQFIg8wLKDlp/0jx4xUFHybCIapsXT2N+Q8EdgtiS1lwRKEcN44I=
+  gem: modifiers
   on:
     tags: true
     repo: nicknovitski/modifiers
